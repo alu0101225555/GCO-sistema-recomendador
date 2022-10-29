@@ -1,117 +1,113 @@
+#  PDF describiendo el analisis realizado en varios ejemplos y las conclusiones extraidas.
 import numpy as np
+from numpy import mean
+import pandas as pd
 import argparse
+from numpy.linalg import norm
 
+# para ejecutar de momento (solo leyendo el fichero de entrada): python3 GCO.py -fichL pruebaGCO.txt 
 from numpy.core.fromnumeric import transpose
 
-#Lee por línea de comandos e imprime
+#Lee por linea de comandos e imprime
 parser = argparse.ArgumentParser(description='Sistema recomedador')
 parser.add_argument('-fichL', '--fichero_lectura', type = str, help='Nombre fichero lectura')
 args = parser.parse_args()
 variables = vars(args)
 #print(variables)
 
-# Lectura fichero: va leyendo la matriz linea por linea, elimina los saltos de linea y
-# los introduce en la lista matriz_fichero
+indices_incognitas = []
+
 def lectura_fichero(nombre_fichero):
-    fich_entrada = open(nombre_fichero, 'r')
-    matriz_fichero = []
-    for linea in fich_entrada:
-        linea = linea.rstrip('\n')
-        matriz_fichero.append(linea)
 
-    #print(type(matriz_fichero[0]))
-    return matriz_fichero
-    #fich_entrada.close()  
+    A = np.loadtxt(nombre_fichero, dtype='S') #'S' trata el dato como numero
+    print("MATRIZ ORIGINAL")
+    print(A)
+    # 1 localizar las incognitas
+    global indices_incognitas # indica que quiero modificar la variable global
+    indices_incognitas = np.where(A == '-')
+    # indices_incognitas = index
+    print("INDICES:")
+    print(indices_incognitas)
+    # print(index)
+              
+    # 2 eliminamos las columnas que contengan las incognitas
+    A1 = np.delete(A, indices_incognitas[1], axis=1) #axis = 1 indica que haga la operacion por columnas
+    # 3 pasar la matriz a entero
+    print("MATRIZ CON COLUMNAS ELIMINADAS:")
+    # print(A1)
+    A2 = A1.astype(int) #convierte la matriz string a matriz int
+    print(A2)
 
-# Crea una copia de la matriz
-def copy(m):
-    result = []
-    for f in m:
-        result.append(f[:])
-    return result
+    return A2
 
-def traspuesta(m):
-    matriz_traspuesta = []
-    matriz_traspuesta = np.transpose(m)
-    #print(matriz_traspuesta)
-    return matriz_traspuesta
 
-# Convierte lista a enteros: recorremos filas y comprobamos si se encuentra el elemento '-'
-# si no está, convertimos cada elemento en un int y lo pasamos a una 
-# nueva lista result_filas 
-#def conv_int(m):
-#    result_filas = []
-#    for row in m:
-#        if ('-' not in row):
-#            for elem in row:
-#                aux = int(elem)
-#                result_filas.append(aux)
-#    
-#    return result_filas
 
-# Extrae las filas sin incognita y las introduce en result[]
-def extraccion_filas(m):
-    result = []
-    print (m)
-    for i in m:
-        if ('-' not in i):
-            result.append(i)
-            #print(i)
-    #print(result)
-    return result
 
-# Convierte lista a enteros: recorremos filas y comprobamos si se encuentra el elemento '-'
-# si no está, convertimos cada elemento en un int y lo pasamos a una 
-# nueva lista enteros
-def conv_int2(m):
-    enteros = []
+def correlacion_pearson(matriz):
+    # convertimos la matriz a dataframe 
+    # data_frame = pd.DataFrame(matriz)
+    # print(data_frame)
+    # corr_data = data_frame.corr()
+    # print(corr_data)
+    # media2 = data_frame[0].corr(data_frame[1], method='pearson')
+    # print(media2)
+    
+    # IDEA: creamos un bucle con los indices de las incognitas y, dentro del bucle,
+    #       creamos otro que hace la correlacion_pearson de la posicion de la incognita
+    #       con las filas de la matriz. Como la correlacion que hace numpy da una matriz 2x2,
+    #       y nosotros escogemos una celda, ese valor lo guardamos en una lista. Para que asi,
+    #       la matriz de la correlacion tenga cada fila la lista de la correlacion de cada incognita
+    
+    # calculamos la media de cada fila (fila equivale a persona)
+    media = np.mean(matriz, axis=1)
+    print(media)
+    corr_data = np.corrcoef(matriz[indices_incognitas[0]], matriz[1])[1,0]
+    print(corr_data)
+    
+    dist_euclide = np.linalg.norm(matriz[indices_incognitas[0]] - matriz[1])
+    print(dist_euclide)
+    
+    result_coseno = np.dot(matriz[indices_incognitas[0]], matriz[1])/(norm(matriz[indices_incognitas[0]])*norm(matriz[1]))
+    print(result_coseno)
+    #s umatorio = []
+    #for i in matriz:
+    #   for j in i:
+    #         sumatorio[i] = sumatorio[i][j] - media
+    
 
-    for i in m:
-        lista = []
-        for elemt in i:
-            if elemt != ' ':
-                aux = int(elemt)
-                lista.append(aux)
-        enteros.append(lista)
-    return enteros
 
-def extraccion_columna(m):
-    result = []
 
-    # esto lo que hace es pasar la lista a lista de vectores [[1,2,3], [4,5,6]]
-    for i in m:
-        lista = []
-        if i != ' ':
-            lista.append(i)
-        result.append(lista)
-    print("lista de vectores", result)
-    #
 
-    #traspuesta
-        
 
-    # esto lo que hace es ir recorriendo la matriz traspuesta y extraer la fila con '-' quedándonos con las otras en resultado_final
-    resultado_final = []
-    for i in result:
-        for j in i:
-            if ('-' not in j) & (j != ' '):
-                resultado_final.append(j)
+# def distancia_coseno(matriz)
 
-    return resultado_final
-        
+
+
+# def distancia_euclidea(matriz)
+
+
+
+# def traspuesta(m):
+#     matriz_traspuesta = []
+#     matriz_traspuesta = np.transpose(m)
+#     #print(matriz_traspuesta)
+#     return matriz_traspuesta
+
+
+# menu de las opciones
+# metodos de calculo
+    # Correlacion de Pearson.
+    # Distancia coseno.
+    # Distancia Euclidea.
+# Numero de vecinos considerado.
+# Tipo de prediccion:
+    # Prediccion simple.
+    # Diferencia con la media
 
 #a = ['1 2 3', '4 5 -', '7 8 9']
-L = lectura_fichero("pruebaGCO.txt")
+#L = lectura_fichero("pruebaGCO.txt")
+L = lectura_fichero('pruebaGCO.txt')
+print(L) 
+correlacion_pearson(L)
 
-E =extraccion_columna(L)
-print(E)
-
-#B = extraccion_filas(L)
-#C = conv_int2(E)
-#print(C)
-#print(type(C[0][2])) #-> para acceder C[fila][columna]
-
-#D = traspuesta(L)
-#print(D)
-#C = traspuesta(B)
-#print(C)
+print(indices_incognitas)
