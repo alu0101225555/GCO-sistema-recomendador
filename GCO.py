@@ -16,6 +16,9 @@ variables = vars(args)
 #print(variables)
 
 indices_incognitas = []
+lista_pearson_correlation = []
+lista_distancia_euclidea = []
+lista_distancia_coseno = []
 
 def lectura_fichero(nombre_fichero):
 
@@ -59,33 +62,111 @@ def correlacion_pearson(matriz):
     #       la matriz de la correlacion tenga cada fila la lista de la correlacion de cada incognita
     
     # calculamos la media de cada fila (fila equivale a persona)
-    media = np.mean(matriz, axis=1)
-    print(media)
-    corr_data = np.corrcoef(matriz[indices_incognitas[0]], matriz[1])[1,0]
-    print(corr_data)
+    # media = np.mean(matriz, axis=1)
+    # print(media)
+
+    #creacion dataframe
+    #df_pearson = pd.DataFrame()
+
+    #bucle que recorre indices_incognitas
+    global lista_pearson_correlation
+    for i in indices_incognitas[0]:
+        j = 0
+        aux = []
+        print("INCOGNITA CORRELACION PEARSON: ", i)  
+        
+        while j < len(matriz):
+            if (j == i):
+                j = j + 1
+            else:
+                print(matriz[i])
+                print(matriz[j])
+                #corr_data = np.corrcoef(matriz[i], matriz[j])[1,0]
+                # print(corr_data)
+                aux.append(np.corrcoef(matriz[i], matriz[j])[1,0])
+                # print(aux)
+                # print(lista_pearson_correlation)
+                # guardamos en dataframe
+                # df_pearson = df_pearson.append(corr_data, ignore_index=True)
+                j = j + 1
+
+        lista_pearson_correlation.append(aux)
+        return lista_pearson_correlation
+
+    # corr_data = np.corrcoef(matriz[indices_incognitas[0]], matriz[1])[1,0]
+    # print(corr_data)
     
-    dist_euclide = np.linalg.norm(matriz[indices_incognitas[0]] - matriz[1])
-    print(dist_euclide)
+    # dist_euclide = np.linalg.norm(matriz[indices_incognitas[0]] - matriz[1])
+    # print(dist_euclide)
     
-    result_coseno = np.dot(matriz[indices_incognitas[0]], matriz[1])/(norm(matriz[indices_incognitas[0]])*norm(matriz[1]))
-    print(result_coseno)
+    # result_coseno = np.dot(matriz[indices_incognitas[0]], matriz[1])/(norm(matriz[indices_incognitas[0]])*norm(matriz[1]))
+    # print(result_coseno)
     #s umatorio = []
     #for i in matriz:
     #   for j in i:
     #         sumatorio[i] = sumatorio[i][j] - media
     
+def distancia_euclidea(matriz):
+    for i in indices_incognitas[0]:
+        j = 0
+        aux = []
+        print("INCOGNITA DISTANCIA EUCLIDES: ", i)  
+        
+        while j < len(matriz):
+            if (j == i):
+                j = j + 1
+            else:
+                print(matriz[i])
+                print(matriz[j])
+                # dist_euclide = np.linalg.norm(matriz[i] - matriz[j])
+                # print(dist_euclide)
+                aux.append(np.linalg.norm(matriz[i] - matriz[j]))
+                # corr_data = np.corrcoef(matriz[i], matriz[j])[1,0]
+                # print(corr_data)
+                j = j + 1
+        lista_distancia_euclidea.append(aux)
+    return lista_distancia_euclidea
 
 
 
+def distancia_coseno(matriz):
+    for i in indices_incognitas[0]:
+        j = 0
+        aux = []
+        print("INCOGNITA DISTANCIA COSENO: ", i)  
+        
+        while j < len(matriz):
+            if (j == i):
+                j = j + 1
+            else:
+                print(matriz[i])
+                print(matriz[j])
+                # result_coseno = np.dot(matriz[i], matriz[j])/(norm(matriz[i])*norm(matriz[j]))
+                aux.append(np.dot(matriz[i], matriz[j])/(norm(matriz[i])*norm(matriz[j])))
+                # print(result_coseno)
+                # dist_euclide = np.linalg.norm(matriz[i] - matriz[j])
+                # print(dist_euclide)
+                # corr_data = np.corrcoef(matriz[i], matriz[j])[1,0]
+                # print(corr_data)
+                j = j + 1
+        lista_distancia_coseno.append(aux)
 
+    # orde_coseno = sorted(lista_distancia_coseno)
+    # print("Lista ordenada coseno:", orde_coseno)
 
-# def distancia_coseno(matriz)
+    return lista_distancia_coseno
+    
 
-
-
-# def distancia_euclidea(matriz)
-
-
+def vecinos(lista, n_vecinos):
+    if (n_vecinos == 0) or (n_vecinos < len(lista)):
+        print("El numero de vecino tiene que ser mayor que 0 y menor que el numero de filas")
+    else:
+        for i in lista:
+            lista_ordenada = sorted(i, reverse=True)
+            # print("Lista ordenada:", lista_ordenada)
+            lista_vecinos = lista_ordenada[0:n_vecinos]
+            # print("Lista cortada:", lista_vecinos)
+    return lista_vecinos
 
 # def traspuesta(m):
 #     matriz_traspuesta = []
@@ -108,6 +189,14 @@ def correlacion_pearson(matriz):
 #L = lectura_fichero("pruebaGCO.txt")
 L = lectura_fichero('pruebaGCO.txt')
 print(L) 
-correlacion_pearson(L)
+CP = correlacion_pearson(L)
+DE = distancia_euclidea(L)
+DC = distancia_coseno(L)
+V = vecinos(DE, 2)
+print("Lista cortada:", V)
+
+print("Lista correlaciones de pearson:", lista_pearson_correlation)
+print("Lista distancia euclideas:", lista_distancia_euclidea)
+print("Lista distancia coseno:", lista_distancia_coseno)
 
 print(indices_incognitas)
