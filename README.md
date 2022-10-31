@@ -66,11 +66,28 @@ La medida de similitud es una función cuyo valor real cuantifica la semejanza e
 Para calcular la correlación de Pearson, creamos una lista global para almacenar las correlaciones de cada incognita de usuario.
 
 Previamente, calculamos una lista que contiene los índices de las incognitas (una lista con el índice de la fila y, otra, la columna de la matriz). En la función, recorremos dicha lista por los índices de la columna.
-<!-- FALTA... -->
+
+<!-- HAY QUE REDACTARLO BIEN... -->
+En aux guardamos una los valores de la correlación de cada incognita de las filas. Es decir, si tenemos 3 incóginas en la matriz original, tendremos 3 correlaciones de dicho item (?)
+
+Dentro del primer bucle, creamos un iterador donde j empezará desde la fila 0 hasta el número de filas totales de la matriz. Si j es igual a la fila donde se encuentra la incognita, seguimos con la siguiente fila (sino, se haría la correlación de la fila incognita con ella misma). En caso contrario, guardamos en aux la lista de la correlación.
+Para el cálculo de la correlación, usamos la función ```np.corrcoef()```, donde indicamos las filas (?) para hallar el cálculo.
+Finalmente, en la lista global de la correlación, insertamos la lista con la correlación de cada incognita
+
+```python
+
+```
 
 
 
 ### 3.2 Distancia Euclídea <a name="id5"></a>
+<!-- MISMA IDEA QUE LO ANTERIOR, PERO MAL REDACTADO :/ -->
+En esta función, iteramos por fila de los índices de la lista incognita.(?)
+Creamos una lista, aux, para almacenar los valores de la distancia Euclídea que calculamos de las filas de cada incognita. Después, guardamos la lista aux en la lista global.
+
+```python
+
+```
 
 
 <!-- Noelia -->
