@@ -63,7 +63,7 @@ def lectura_fichero(nombre_fichero):
     print("MATRIZ COPIA", matriz_copia) #la matriz_copia contiene una maatriz inicializada a 0 con las columnas que contienen la incognita copiadas de la matriz original 
 
 
-#--------------------------------             
+#--------------------------------
     # 2 eliminamos las columnas que contengan las incognitas
     A1 = np.delete(A, indices_incognitas[1], axis=1) #axis = 1 indica que haga la operacion por columnas
     # 3 pasar la matriz a entero
@@ -109,6 +109,7 @@ def correlacion_pearson(matriz):
         while j < len(matriz):
             if (j == i):
                 j = j + 1
+                aux.append(-2)
             else:
                 # print(matriz[i])
                 # print(matriz[j])
@@ -122,7 +123,7 @@ def correlacion_pearson(matriz):
                 j = j + 1
 
         lista_pearson_correlation.append(aux)
-        return lista_pearson_correlation
+    return lista_pearson_correlation
 
     # corr_data = np.corrcoef(matriz[indices_incognitas[0]], matriz[1])[1,0]
     # print(corr_data)
@@ -146,6 +147,7 @@ def distancia_euclidea(matriz):
         while j < len(matriz):
             if (j == i):
                 j = j + 1
+                aux.append(-2)
             else:
                 # print(matriz[i])
                 # print(matriz[j])
@@ -169,6 +171,7 @@ def distancia_coseno(matriz):
         while j < len(matriz):
             if (j == i):
                 j = j + 1
+                aux.append(-2)
             else:
                 # print(matriz[i])
                 # print(matriz[j])
@@ -234,8 +237,127 @@ def vecinos(lista, n_vecinos):
                         
 #     # extraemos los valores de la posicion de la matriz
 
+def predicSimple(lista_cortada_vecinos_ordenada, lista_desordenada):
+#     # [[1, 2], [3, 4]]
+#     indice = []
+#     for fila_lista in lista_desordenada:
+#         for item in fila_lista:
+#             for fila_array2 in lista_cortada_vecinos_ordenada:
+#                 for item2 in fila_array2:
+#                     if item == item2:
+#                         indice.append(fila_lista.index(item))
+#     print("indices usuarios:", indice)
 
+    #Comparamos lista_ordenada con desordenada para obtener los indices de los usuarios
+    indices_item_iguales_listas = []
+    for elemento_array in lista_cortada_vecinos_ordenada:
+        # i = 0
+        for item in elemento_array:
+            # indices_item_iguales_listas contiene los indices de los items que son iguales entre las
+            # listas_cortada_vecinos_ordenada y la lista_desordenada que contiene todas las similitudes
+            aux_indice = np.where(lista_desordenada == item)
+            # print(lista_desordenada[i])
+            
+            indices_item_iguales_listas.append(aux_indice[1][0]) #son las columnas de los items iguales
+            # print("indices usuario", aux_indice[1][0])
+        # i = i + 1
+            # print(indices_incognitas[1][0])
+            # obtener el valor de la matriz copia que esta en ese indice
+            # print(matriz_copia[:,indices_incognitas[1][0]][aux_indice[1][0]])
+            # print(matriz_copia[:,indices_item_iguales_listas[0]])
+            # print("indices: ", indices_item_iguales_listas)
+    print("indices usuarios: ", indices_item_iguales_listas)
 
+    #dataframe para sacar los valores de la columna incognita
+    #FUNCIONA
+    df = pd.DataFrame(matriz_copia)
+    print(indices_incognitas[1])
+    aux = []
+    for j in indices_incognitas[1]: 
+        print("COLUMNA: ", j)
+        for i in range(len(df)):
+            aux = df.iloc[i,j]
+            #print ("i",i)
+            print("valor", aux)
+
+    aux_valores_usuarios = []
+    for i in indices_item_iguales_listas:
+        for j in indices_incognitas[1]:
+            aux_valores_usuarios.append(df.iloc[i,j])
+    print("valores del usuario",aux_valores_usuarios)
+
+    sumatorio = 0
+    sumatorioDenominador = 0
+    for i in lista_cortada_vecinos_ordenada:
+        # print(i)
+        for elemento in i:
+          for j in aux_valores_usuarios:
+            multiplicacion = elemento * j
+            sumatorio = sumatorio + multiplicacion
+            if(elemento < 0):
+                sumatorioDenominador = abs(sumatorioDenominador + elemento)
+            else:
+                sumatorioDenominador = sumatorioDenominador + elemento
+    resultadoSimple = sumatorio/sumatorioDenominador
+    print("Resultado precision simple:", resultadoSimple)
+
+######################
+def predicMedia(lista_cortada_vecinos_ordenada, lista_desordenada):
+
+    #Comparamos lista_ordenada con desordenada para obtener los indices de los usuarios
+    indices_item_iguales_listas = []
+    for elemento_array in lista_cortada_vecinos_ordenada:
+        # i = 0
+        for item in elemento_array:
+            # indices_item_iguales_listas contiene los indices de los items que son iguales entre las
+            # listas_cortada_vecinos_ordenada y la lista_desordenada que contiene todas las similitudes
+            aux_indice = np.where(lista_desordenada == item)
+            # print(lista_desordenada[i])
+            
+            indices_item_iguales_listas.append(aux_indice[1][0]) #son las columnas de los items iguales
+            # print("indices usuario", aux_indice[1][0])
+        # i = i + 1
+            # print(indices_incognitas[1][0])
+            # obtener el valor de la matriz copia que esta en ese indice
+            # print(matriz_copia[:,indices_incognitas[1][0]][aux_indice[1][0]])
+            # print(matriz_copia[:,indices_item_iguales_listas[0]])
+            # print("indices: ", indices_item_iguales_listas)
+    print("indices usuarios: ", indices_item_iguales_listas)
+
+    #dataframe para sacar los valores de la columna incognita
+    #FUNCIONA
+    df = pd.DataFrame(matriz_copia)
+    print(indices_incognitas[1])
+    aux = []
+    for j in indices_incognitas[1]: 
+        print("COLUMNA: ", j)
+        for i in range(len(df)):
+            aux = df.iloc[i,j]
+            #print ("i",i)
+            print("valor", aux)
+
+    aux_valores_usuarios = []
+    for i in indices_item_iguales_listas:
+        for j in indices_incognitas[1]:
+            aux_valores_usuarios.append(df.iloc[i,j])
+    print("valores del usuario",aux_valores_usuarios)
+
+    
+
+    sumatorio = 0
+    sumatorioDenominador = 0
+    for i in lista_cortada_vecinos_ordenada:
+        # print(i)
+        for elemento in i:
+          for j in aux_valores_usuarios:
+            multiplicacion = elemento * j
+            sumatorio = sumatorio + multiplicacion
+            if(elemento < 0):
+                sumatorioDenominador = abs(sumatorioDenominador + elemento)
+            else:
+                sumatorioDenominador = sumatorioDenominador + elemento
+    resultadoSimple = sumatorio/sumatorioDenominador
+    print("Resultado precision simple:", resultadoSimple)
 
 
 
@@ -269,6 +391,8 @@ def main():
     # Tipo de prediccion:
     # Prediccion simple.
     # Diferencia con la media
+
+    predicSimple(vecinos1, opcion)
     
     
     # CP = correlacion_pearson(L)
