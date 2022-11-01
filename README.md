@@ -92,13 +92,101 @@ Creamos una lista, aux, para almacenar los valores de la distancia Euclídea que
 
 <!-- Noelia -->
 ### 3.3 Distancia Coseno <a name="id6"></a>
+Creamos el método ```distancia_coseno``` que recibe la matriz como parámetro. A continuación, vamos recorriendo la lista de los índices de las incógnitas y creamos un aux; a su vez, recorremos la matriz y comparamos si la posición de la actual de la matriz coincide con la posición de la incógnita, si es así introducimos un -2 en dicha posición, ya que nunca se podrá coger dicho valor y esto se hace para que la lista tenga la misma cantidad de elementos que la original. En caso contrario calculamos la distancia coseno haciendo uso de la función de la librería numpy ```np.dot(matriz[i], matriz[j])/(norm(matriz[i])*norm(matriz[j]))``` y lo introducmos en la variable aux para, al final, crear una lista de listas que contengas las distancias cosenos.
+
+```python
+def distancia_coseno(matriz):
+    for i in indices_incognitas[0]:
+        j = 0
+        aux = []
+        # print("INCOGNITA DISTANCIA COSENO: ", i)  
+        
+        while j < len(matriz):
+            if (j == i):
+                j = j + 1
+                aux.append(-2)
+            else:
+                aux.append(np.dot(matriz[i], matriz[j])/(norm(matriz[i])*norm(matriz[j])))
+                j = j + 1
+        lista_distancia_coseno.append(aux)
+
+    return lista_distancia_coseno
+```
 
 ## 4. NÚMEROS DE VECINOS <a name="id7"></a>
+Para la función ```vecino``` le pasamos la lista de similitudes calculadas con el método elegido y el número de vecinos que desea coger el usuario. Además, debemos crear una variable llamada *lista_cortada_vecinos* que será una lista de listas para la lista de la cantidad de vecinos más próximos elegidos para cada usuario. A continuación, comprobamos que el numero de vecinos introducidos por consola son mayor que 0 y menor que el número de filas (personas que forman la matriz) y, si se cumplen las condiciones, recorremos la lista de similitudes, creamos una variable auxiliar *lista_ordenada* que ordenará la lista de similitudes de mayor a menor para después cortarla hasta el número de vecinos establecidos por el usuario *lista_ordenada[0:n_vecinos]* para después introducirlos finalmente en la lista final *lista_cortada_vecinos* que retornará la función.
 
+```python
+def vecinos(lista, n_vecinos):
+    lista_cortada_vecinos = [] #aux es una lista de listas que contiene las similitudes entre vecinos "cortadas"
+    if (n_vecinos == 0) or (n_vecinos < len(lista)):
+        print("El numero de vecino tiene que ser mayor que 0 y menor que el numero de filas")
+    else:
+        for i in lista:
+            lista_ordenada = sorted(i, reverse=True)
+            # print("Lista ordenada:", lista_ordenada)
+            lista_vecinos = lista_ordenada[0:n_vecinos]
+            lista_cortada_vecinos.append(lista_vecinos)
+    return lista_cortada_vecinos
+```
 
 ## 5. PREDICCIÓN <a name="id8"></a>
 
 ### 5.1 Predicción simple <a name="id9"></a>
+En la función ```predicSimple``` necesitamos pasarle la lista con las similitudes de los vecinos elegidos *lista_cortada_vecinos_ordenada* y la lista general de similitudes *lista_desordenada*.
+A continuación, comparamos la *lista_cortada_vecinos_ordenada* y la lista general desordenada para obtener los índices de los usuarios.
 
+```python
+#Comparamos lista_ordenada con desordenada para obtener los indices de los usuarios
+    indices_item_iguales_listas = []
+    for elemento_array in lista_cortada_vecinos_ordenada:
+        # i = 0
+        for item in elemento_array:
+            # indices_item_iguales_listas contiene los indices de los items que son iguales entre las
+            # listas_cortada_vecinos_ordenada y la lista_desordenada que contiene todas las similitudes
+            aux_indice = np.where(lista_desordenada == item)
+            # print(lista_desordenada[i])
+            
+            indices_item_iguales_listas.append(aux_indice[1][0]) #son las columnas de los items iguales
+    print("indices usuarios: ", indices_item_iguales_listas)
+```
+Una vez tenemos los índices, convertimos la matriz en dataframe para poder extraer de manera más fácil los valores. A medida que recorremos el dataframe, comprobamos si el índice de la incógnita coincide con los índices de los usuarios que queremos y extraemos el valor, guardándolas en *aux_valores_usuarios*. 
+
+```python
+df = pd.DataFrame(matriz_copia)
+    print(indices_incognitas[1])
+    aux = []
+    for j in indices_incognitas[1]: 
+        print("COLUMNA: ", j)
+        for i in range(len(df)):
+            aux = df.iloc[i,j]
+            #print ("i",i)
+            print("valor", aux)
+
+    aux_valores_usuarios = []
+    for i in indices_item_iguales_listas:
+        for j in indices_incognitas[1]:
+            aux_valores_usuarios.append(df.iloc[i,j])
+    print("valores del usuario",aux_valores_usuarios)
+```
+
+Por último, hacemos los cálculos correspondientes con los valores obtenidos:
+
+```python
+    sumatorio = 0
+    sumatorioDenominador = 0
+    for i in lista_cortada_vecinos_ordenada:
+        # print(i)
+        for elemento in i:
+          for j in aux_valores_usuarios:
+            multiplicacion = elemento * j
+            sumatorio = sumatorio + multiplicacion
+            if(elemento < 0):
+                sumatorioDenominador = abs(sumatorioDenominador + elemento)
+            else:
+                sumatorioDenominador = sumatorioDenominador + elemento
+    resultadoSimple = sumatorio/sumatorioDenominador
+    print("Resultado precision simple:", resultadoSimple)
+```
 
 ### 5.2 Diferencia con la media <a name="id10"></a>
