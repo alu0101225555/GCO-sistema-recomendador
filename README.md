@@ -67,15 +67,15 @@ Para el funcionamiento de la aplicación, se recomienda utilizar la versión 2.7
 La medida de similitud es una función cuyo valor real cuantifica la semejanza entre dos objetos. Esta es utilizada para medir hasta qué punto dos objetos, de acuerdo con los valores de sus atributos (características), son similares.
 
 ### 3.1 Correlación de pearson <a name="id4"></a>
-Para calcular la correlación de Pearson, creamos una lista global para almacenar las correlaciones de cada incognita de usuario.
+Para calcular la correlación de Pearson, creamos una lista global para almacenar las correlaciones de cada incógnita de usuario.
 
-Previamente, calculamos una lista que contiene los índices de las incognitas (una lista con el índice de la fila y, otra, la columna de la matriz). En la función, recorremos dicha lista por los índices de la columna.
-En la lista aux guardamos una los valores de la correlación de cada incognita de las filas. Es decir, si tenemos 3 incóginas en la matriz original, tendremos 3 correlaciones de dicho item.
+Previamente, calculamos una lista que contiene los índices de las incógnitas (una lista con el índice de la fila y, otra, la columna de la matriz). En la función, recorremos dicha lista por los índices de la columna.
+En la lista aux guardamos una los valores de la correlación de cada incógnita de las filas. Es decir, si tenemos 3 incógnitas en la matriz original, tendremos 3 correlaciones de dicho item.
 
-Dentro del primer bucle, creamos un iterador donde _j_ empezará desde la fila 0 hasta el número de filas totales de la matriz. Si _j_ es igual a la fila donde se encuentra la incognita, seguimos con la siguiente fila y en la matriz, insertamos un valor -2. En caso contrario, guardamos en aux la lista de la correlación.
+Dentro del primer bucle, creamos un iterador donde _j_ empezará desde la fila 0 hasta el número de filas totales de la matriz. Si _j_ es igual a la fila donde se encuentra la incógnita, seguimos con la siguiente fila y en la matriz, insertamos un valor -2. En caso contrario, guardamos en aux la lista de la correlación.
 
 Para el cálculo de la correlación, usamos la función ```np.corrcoef()```.
-Finalmente, en la lista global de la correlación, insertamos la lista con la correlación de cada incognita.
+Finalmente, en la lista global de la correlación, insertamos la lista con la correlación de cada incógnita.
 
 ```python
 def correlacion_pearson(matriz):

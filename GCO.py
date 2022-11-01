@@ -199,41 +199,36 @@ def predicMedia(lista_cortada_vecinos_ordenada, lista_desordenada, matriz):
         for i in range(len(df)):
             aux = df.iloc[i,j]
 
-    aux_valores_usuarios = []
-    for i in indices_item_iguales_listas:
+    aux_valoracion_item_usuario = []
+    aux_media_usuarios = []
+    media_usuarios = []
+    valoracion_item_usuario = []
+    for fila in indices_item_iguales_listas:
         for j in indices_incognitas[1]:
-            aux_valores_usuarios.append(df.iloc[i,j])
-    
-    # PRUEBA QUE COGE LA FILA PARA HACER LA MEDIA DE LA FILA...
-    print("Valores usuarios", aux_valores_usuarios)
-    print("Fila de la matriz", matriz[1])
-    aux_prueba = []
-    aux_prueba = matriz[1].copy()
-    aux_prueba = np.append(aux_prueba, aux_valores_usuarios[0])
-    print("Media de una fila", media(aux_prueba))
-    
-    # --------------------
+            aux_fila = []
+            aux_fila = matriz[fila].copy()
+            aux_fila = np.append(aux_fila, df.iloc[fila,j])
+            aux_valoracion_item_usuario.append(df.iloc[fila,j])
+            aux_media_usuarios.append(media(aux_fila))
+    # media_usuarios = [aux_media_usuarios]
+    # valoracion_item_usuario = [aux_valoracion_item_usuario]
+    # print(media_usuarios)
+    # print(valoracion_item_usuario)
 
-    medias_vecinos = []
-    for i in aux_valores_usuarios:
-        medias_vecinos.append(media(i))
-    print("Medias medias", medias_vecinos)
     
     sumatorio = 0
     sumatorioDenominador = 0
-    for i in lista_cortada_vecinos_ordenada:
-        for elemento in i:
-          for j in aux_valores_usuarios:
-              for k in medias_vecinos:
-                multiplicacion = elemento + (j*k)
-                sumatorio = sumatorio + multiplicacion
-                if(elemento < 0):
-                    sumatorioDenominador = abs(sumatorioDenominador + elemento)
-                else:
-                    sumatorioDenominador = sumatorioDenominador + elemento
-
-    resultadoSimple = sumatorio/sumatorioDenominador
-    print("Resultado precision con media:", resultadoSimple)
+    lista_prediccion_con_media = []
+    for lista in lista_cortada_vecinos_ordenada:
+        for k in range(len(aux_media_usuarios)):
+            multiplicacion = lista[k] * (aux_valoracion_item_usuario[k] - aux_media_usuarios[k])
+            sumatorio = sumatorio + multiplicacion
+            if(lista[k] < 0):
+                sumatorioDenominador = abs(sumatorioDenominador + lista[k])
+            else:
+                sumatorioDenominador = sumatorioDenominador + lista[k]
+            lista_prediccion_con_media.append(media(matriz[indices_incognitas[0]]) + (sumatorio/sumatorioDenominador))
+    print("Resultado precision con media:", lista_prediccion_con_media)
 
 
 
