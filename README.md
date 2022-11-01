@@ -21,8 +21,6 @@ Dana Belén Choque Zárate - alu0101328348
 ## 1. INTRODUCCIÓN <a name="id1"></a>
 Se ha desarrollado una aplicación por línea de comandos que resuelve un sistema de recomendación siguiendo el método de filtrado colaborativo. 
 
-La métrica elegida. Los posibles valores son:
-
 
 
 ## 2. FUNCIONAMIENTO <a name="id2"></a>
@@ -54,7 +52,13 @@ Ejemplo de ejecución:
 ```bash
 python GCO.py -fichL pruebaGCO.txt -similitud pearson -vecinos 2
 ```
+```bash
+usuario@ubuntu:/mnt/c/Users/uSer/OneDrive/Escritorio/Cuarto/GCO/PE/GCO-sistema-recomendador$ python 
 
+
+
+```
+<!-- GIF -->
 Para el funcionamiento de la aplicación, se recomienda utilizar la versión 2.7.17 de Python. Ya que no se soporta en versiones superiores.
 
 
@@ -66,27 +70,56 @@ La medida de similitud es una función cuyo valor real cuantifica la semejanza e
 Para calcular la correlación de Pearson, creamos una lista global para almacenar las correlaciones de cada incognita de usuario.
 
 Previamente, calculamos una lista que contiene los índices de las incognitas (una lista con el índice de la fila y, otra, la columna de la matriz). En la función, recorremos dicha lista por los índices de la columna.
+En la lista aux guardamos una los valores de la correlación de cada incognita de las filas. Es decir, si tenemos 3 incóginas en la matriz original, tendremos 3 correlaciones de dicho item.
 
-<!-- HAY QUE REDACTARLO BIEN... -->
-En aux guardamos una los valores de la correlación de cada incognita de las filas. Es decir, si tenemos 3 incóginas en la matriz original, tendremos 3 correlaciones de dicho item (?)
+Dentro del primer bucle, creamos un iterador donde _j_ empezará desde la fila 0 hasta el número de filas totales de la matriz. Si _j_ es igual a la fila donde se encuentra la incognita, seguimos con la siguiente fila y en la matriz, insertamos un valor -2. En caso contrario, guardamos en aux la lista de la correlación.
 
-Dentro del primer bucle, creamos un iterador donde j empezará desde la fila 0 hasta el número de filas totales de la matriz. Si j es igual a la fila donde se encuentra la incognita, seguimos con la siguiente fila (sino, se haría la correlación de la fila incognita con ella misma). En caso contrario, guardamos en aux la lista de la correlación.
-Para el cálculo de la correlación, usamos la función ```np.corrcoef()```, donde indicamos las filas (?) para hallar el cálculo.
-Finalmente, en la lista global de la correlación, insertamos la lista con la correlación de cada incognita
+Para el cálculo de la correlación, usamos la función ```np.corrcoef()```.
+Finalmente, en la lista global de la correlación, insertamos la lista con la correlación de cada incognita.
 
 ```python
+def correlacion_pearson(matriz):
 
+    global lista_pearson_correlation
+    for i in indices_incognitas[0]:
+        j = 0
+        aux = []
+        
+        while j < len(matriz):
+            if (j == i):
+                j = j + 1
+                aux.append(-2)
+            else:
+                aux.append(np.corrcoef(matriz[i], matriz[j])[1,0])
+                j = j + 1
+
+        lista_pearson_correlation.append(aux)
+
+    return lista_pearson_correlation
 ```
 
 
 
 ### 3.2 Distancia Euclídea <a name="id5"></a>
-<!-- MISMA IDEA QUE LO ANTERIOR, PERO MAL REDACTADO :/ -->
-En esta función, iteramos por fila de los índices de la lista incognita.(?)
-Creamos una lista, aux, para almacenar los valores de la distancia Euclídea que calculamos de las filas de cada incognita. Después, guardamos la lista aux en la lista global.
+Esta función, recibe como parámetro la matriz de valores. En dicha función, tiene la misma idea de iteración que la función Euclídea, sin embargo, utilizamos la función ```np.linalg.norm()``` para el cálculo de la Distancia Euclídea.
 
 ```python
+def distancia_euclidea(matriz):
 
+    for i in indices_incognitas[0]:
+        j = 0
+        aux = []
+        
+        while j < len(matriz):
+            if (j == i):
+                j = j + 1
+                aux.append(-2)
+            else:
+                aux.append(np.linalg.norm(matriz[i] - matriz[j]))
+                j = j + 1
+        lista_distancia_euclidea.append(aux)
+
+    return lista_distancia_euclidea
 ```
 
 
@@ -96,10 +129,10 @@ Creamos el método ```distancia_coseno``` que recibe la matriz como parámetro. 
 
 ```python
 def distancia_coseno(matriz):
+
     for i in indices_incognitas[0]:
         j = 0
         aux = []
-        # print("INCOGNITA DISTANCIA COSENO: ", i)  
         
         while j < len(matriz):
             if (j == i):
@@ -118,15 +151,16 @@ Para la función ```vecino``` le pasamos la lista de similitudes calculadas con 
 
 ```python
 def vecinos(lista, n_vecinos):
-    lista_cortada_vecinos = [] #aux es una lista de listas que contiene las similitudes entre vecinos "cortadas"
+    lista_cortada_vecinos = []
+
     if (n_vecinos == 0) or (n_vecinos < len(lista)):
         print("El numero de vecino tiene que ser mayor que 0 y menor que el numero de filas")
     else:
         for i in lista:
             lista_ordenada = sorted(i, reverse=True)
-            # print("Lista ordenada:", lista_ordenada)
             lista_vecinos = lista_ordenada[0:n_vecinos]
             lista_cortada_vecinos.append(lista_vecinos)
+
     return lista_cortada_vecinos
 ```
 
@@ -137,37 +171,26 @@ En la función ```predicSimple``` necesitamos pasarle la lista con las similitud
 A continuación, comparamos la *lista_cortada_vecinos_ordenada* y la lista general desordenada para obtener los índices de los usuarios.
 
 ```python
-#Comparamos lista_ordenada con desordenada para obtener los indices de los usuarios
     indices_item_iguales_listas = []
     for elemento_array in lista_cortada_vecinos_ordenada:
-        # i = 0
         for item in elemento_array:
-            # indices_item_iguales_listas contiene los indices de los items que son iguales entre las
-            # listas_cortada_vecinos_ordenada y la lista_desordenada que contiene todas las similitudes
             aux_indice = np.where(lista_desordenada == item)
-            # print(lista_desordenada[i])
             
-            indices_item_iguales_listas.append(aux_indice[1][0]) #son las columnas de los items iguales
-    print("indices usuarios: ", indices_item_iguales_listas)
+            indices_item_iguales_listas.append(aux_indice[1][0])
 ```
 Una vez tenemos los índices, convertimos la matriz en dataframe para poder extraer de manera más fácil los valores. A medida que recorremos el dataframe, comprobamos si el índice de la incógnita coincide con los índices de los usuarios que queremos y extraemos el valor, guardándolas en *aux_valores_usuarios*. 
 
 ```python
-df = pd.DataFrame(matriz_copia)
-    print(indices_incognitas[1])
+    df = pd.DataFrame(matriz_copia)
     aux = []
     for j in indices_incognitas[1]: 
-        print("COLUMNA: ", j)
         for i in range(len(df)):
             aux = df.iloc[i,j]
-            #print ("i",i)
-            print("valor", aux)
 
     aux_valores_usuarios = []
     for i in indices_item_iguales_listas:
         for j in indices_incognitas[1]:
             aux_valores_usuarios.append(df.iloc[i,j])
-    print("valores del usuario",aux_valores_usuarios)
 ```
 
 Por último, hacemos los cálculos correspondientes con los valores obtenidos:
@@ -176,7 +199,6 @@ Por último, hacemos los cálculos correspondientes con los valores obtenidos:
     sumatorio = 0
     sumatorioDenominador = 0
     for i in lista_cortada_vecinos_ordenada:
-        # print(i)
         for elemento in i:
           for j in aux_valores_usuarios:
             multiplicacion = elemento * j
@@ -185,6 +207,7 @@ Por último, hacemos los cálculos correspondientes con los valores obtenidos:
                 sumatorioDenominador = abs(sumatorioDenominador + elemento)
             else:
                 sumatorioDenominador = sumatorioDenominador + elemento
+    
     resultadoSimple = sumatorio/sumatorioDenominador
     print("Resultado precision simple:", resultadoSimple)
 ```
