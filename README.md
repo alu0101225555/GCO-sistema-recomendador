@@ -50,7 +50,7 @@ Argumentos:
 Ejemplo de ejecución:
 <!-- PONER EL DEFINITIVO -->
 ```bash
-python GCO.py -fichL pruebaGCO.txt -similitud pearson -vecinos 2
+python GCO.py -fichL prueba1.txt -similitud pearson -vecinos 2
 ```
 ```bash
 usuario@ubuntu:/mnt/c/Users/uSer/OneDrive/Escritorio/Cuarto/GCO/PE/GCO-sistema-recomendador$ python 

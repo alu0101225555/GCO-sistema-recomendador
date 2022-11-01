@@ -183,7 +183,7 @@ def media(lista):
 
 
 
-def predicMedia(lista_cortada_vecinos_ordenada, lista_desordenada):
+def predicMedia(lista_cortada_vecinos_ordenada, lista_desordenada, matriz):
 
     # Comparamos lista_ordenada con desordenada para obtener los indices de los usuarios
     indices_item_iguales_listas = []
@@ -203,7 +203,16 @@ def predicMedia(lista_cortada_vecinos_ordenada, lista_desordenada):
     for i in indices_item_iguales_listas:
         for j in indices_incognitas[1]:
             aux_valores_usuarios.append(df.iloc[i,j])
-    # print("Valores usuarios", aux_valores_usuarios)
+    
+    # PRUEBA QUE COGE LA FILA PARA HACER LA MEDIA DE LA FILA...
+    print("Valores usuarios", aux_valores_usuarios)
+    print("Fila de la matriz", matriz[1])
+    aux_prueba = []
+    aux_prueba = matriz[1].copy()
+    aux_prueba = np.append(aux_prueba, aux_valores_usuarios[0])
+    print("Media de una fila", media(aux_prueba))
+    
+    # --------------------
 
     medias_vecinos = []
     for i in aux_valores_usuarios:
@@ -231,18 +240,19 @@ def predicMedia(lista_cortada_vecinos_ordenada, lista_desordenada):
 # menu de las opciones
 def main():
 
-    fichero = lectura_fichero(args.fichero_lectura)
+    matriz = lectura_fichero(args.fichero_lectura)
+    # print("Fichero:", matriz)
     opcion = []
     # metodos de calculo
     # Correlacion de Pearson.
     if (args.calculo_similitudes == 'pearson'):
-        opcion = correlacion_pearson(fichero)
+        opcion = correlacion_pearson(matriz)
     # Distancia coseno.
     elif (args.calculo_similitudes == 'distancia euclidea') or (args.calculo_similitudes == 'euclidea'):
-        opcion = distancia_euclidea(fichero)  
+        opcion = distancia_euclidea(matriz)  
     # Distancia Euclidea.
     elif (args.calculo_similitudes == 'distancia coseno') or (args.calculo_similitudes == 'coseno'):
-        opcion = distancia_coseno(fichero)
+        opcion = distancia_coseno(matriz)
     else:
         print("ERROR en la introduccion del parametro similitud")
     
@@ -259,7 +269,7 @@ def main():
     # Prediccion simple.
     predicSimple(vecinos1, opcion)
     # Diferencia con la media
-    predicMedia(vecinos1, opcion)
+    predicMedia(vecinos1, opcion, matriz)
 
     
 main()
