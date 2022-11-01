@@ -207,11 +207,6 @@ def predicMedia(lista_cortada_vecinos_ordenada, lista_desordenada, matriz):
             aux_fila = np.append(aux_fila, df.iloc[fila,j])
             aux_valoracion_item_usuario.append(df.iloc[fila,j])
             aux_media_usuarios.append(media(aux_fila))
-    # media_usuarios = [aux_media_usuarios]
-    # valoracion_item_usuario = [aux_valoracion_item_usuario]
-    # print(media_usuarios)
-    # print(valoracion_item_usuario)
-
     
     sumatorio = 0
     sumatorioDenominador = 0
