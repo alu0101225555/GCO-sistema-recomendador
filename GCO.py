@@ -10,7 +10,7 @@ parser = argparse.ArgumentParser(description='Sistema Recomedador')
 parser.add_argument('-fichL', '--fichero_lectura', type = str, help='Nombre fichero lectura')
 parser.add_argument('-similitud', '--calculo_similitudes', type = str, help='Opcion de metodo de calculo de similitud')
 parser.add_argument('-vecinos', '--num_vecinos', type = int, help='Numero de vecinos')
-# parser.add_argument('-prediccion', '--tipo_prediccion', type = str, help='Tipo de prediccion')
+parser.add_argument('-prediccion', '--tipo_prediccion', type = str, help='Tipo de prediccion')
 
 args = parser.parse_args()
 variables = vars(args)
@@ -54,11 +54,8 @@ def lectura_fichero(nombre_fichero):
     # Eliminamos las columnas que contengan las incognitas
     # axis = 1 indica que haga la operacion por columnas
     A1 = np.delete(A, indices_incognitas[1], axis=1)
-    # Pasar la matriz a entero
-    # print("MATRIZ CON COLUMNAS ELIMINADAS:")
     # convierte la matriz string a matriz int
     A2 = A1.astype(int)
-    # print(A2)
 
     return A2
 
@@ -243,10 +240,10 @@ def main():
     if (args.calculo_similitudes == 'pearson'):
         opcion = correlacion_pearson(matriz)
     # Distancia coseno.
-    elif (args.calculo_similitudes == 'distancia euclidea') or (args.calculo_similitudes == 'euclidea'):
+    elif (args.calculo_similitudes == 'euclidea'):
         opcion = distancia_euclidea(matriz)  
     # Distancia Euclidea.
-    elif (args.calculo_similitudes == 'distancia coseno') or (args.calculo_similitudes == 'coseno'):
+    elif (args.calculo_similitudes == 'coseno'):
         opcion = distancia_coseno(matriz)
     else:
         print("ERROR en la introduccion del parametro similitud")
@@ -262,9 +259,11 @@ def main():
     
     # Tipo de prediccion:
     # Prediccion simple.
-    predicSimple(vecinos1, opcion)
+    if (args.tipo_prediccion == 'simple'):
+        predicSimple(vecinos1, opcion)
     # Diferencia con la media
-    predicMedia(vecinos1, opcion, matriz)
+    elif (args.tipo_prediccion == 'media'):
+        predicMedia(vecinos1, opcion, matriz)
 
-    
+
 main()

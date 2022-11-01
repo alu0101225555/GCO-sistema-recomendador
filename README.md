@@ -41,24 +41,44 @@ python GCO.py [-h]
               [-fichL FICHERO_LECTURA]
               [-similitud CALCULO_SIMILITUDES]
               [-vecinos NUM_VECINOS]
+              [-prediccion TIPO_PREDICCION]
 ```
 Argumentos:
 * ```-fichL FICHERO_LECTURA, --fichero_lectura FICHERO_LECTURA```: Nombre del fichero.
 * ```-similitud CALCULO_SIMILITUDES, --calculo_similitudes CALCULO_SIMILITUDES```: Opción del método de similitud.
 * ```vecinos NUM_VECINOS, --num_vecinos NUM_VECINOS```: Número de vecinos.
+* ```-prediccion TIPO_PREDICCION```: Tipo de predicción.
 
 Ejemplo de ejecución:
 <!-- PONER EL DEFINITIVO -->
 ```bash
-python GCO.py -fichL prueba1.txt -similitud pearson -vecinos 2
+python GCO.py -fichL [FILE_NAME] -similitud [pearson | euclidea | coseno] -vecinos [NUM_INT] -prediccion [simple | media]
 ```
 ```bash
-usuario@ubuntu:/mnt/c/Users/uSer/OneDrive/Escritorio/Cuarto/GCO/PE/GCO-sistema-recomendador$ python 
+usuario@ubuntu:/mnt/c/Users/uSer/OneDrive/Escritorio/Cuarto/GCO/PE/GCO-sistema-recomendador$ python GCO.py -fichL prueba1.txt -similitud pearson -vecinos 2 -prediccion simple
+MATRIZ ORIGINAL
+[['5' '3' '4' '4' '-']
+ ['3' '1' '2' '3' '3']
+ ['4' '3' '4' '3' '5']
+ ['3' '3' '1' '5' '4']
+ ['1' '5' '5' '2' '1']]
+('Los vecinos mas proximos son: ', [[0.8528028654224417, 0.7071067811865475]])
+('Resultado opcion similitud elegida:', [[-2, 0.8528028654224417, 0.7071067811865475, 0.0, -0.7921180343813393]])
+('Resultado precision simple:', 4.0)
 
-
+usuario@ubuntu:/mnt/c/Users/uSer/OneDrive/Escritorio/Cuarto/GCO/PE/GCO-sistema-recomendador$ python GCO.py -fichL prueba1.txt -similitud pearson -vecinos 2 -prediccion media
+MATRIZ ORIGINAL
+[['5' '3' '4' '4' '-']
+ ['3' '1' '2' '3' '3']
+ ['4' '3' '4' '3' '5']
+ ['3' '3' '1' '5' '4']
+ ['1' '5' '5' '2' '1']]
+('Los vecinos mas proximos son: ', [[0.8528028654224417, 0.7071067811865475]])
+('Resultado opcion similitud elegida:', [[-2, 0.8528028654224417, 0.7071067811865475, 0.0, -0.7921180343813393]])
+('Resultado precision con media:', [4.6, 4.871979899370592])
 
 ```
-<!-- GIF -->
+
 Para el funcionamiento de la aplicación, se recomienda utilizar la versión 2.7.17 de Python. Ya que no se soporta en versiones superiores.
 
 
